@@ -1,0 +1,3512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --text-primary: #FAFAFA;
+      --text-secondary: #B8B6B0;
+      --text-tertiary: #76746E;
+      --success: #6BE3A4;
+      --warning: #F2C063;
+      --danger: #FF6B6B;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #030303;
+      color: var(--text-primary);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 82% 14%, rgba(224, 118, 88, 0.16) 0%, transparent 40%),
+        radial-gradient(circle at 18% 90%, rgba(180, 180, 200, 0.06) 0%, transparent 40%);
+      animation: drift 36s ease-in-out infinite alternate;
+      z-index: -1;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='3' height='3' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1.5' cy='1.5' r='1' fill='white' opacity='0.014'/%3E%3C/svg%3E");
+      z-index: -1;
+    }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(20px, -20px); }
+    }
+
+    /* ===== AUTH PAGE ===== */
+    #authPage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(24px) saturate(1.2);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .auth-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #C7C4BC 120%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .auth-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-tertiary);
+    }
+
+    .form-input {
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--text-primary);
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .auth-button {
+      padding: 11px 20px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: linear-gradient(180deg, #FFFFFF 0%, #E8E5DD 100%);
+      color: #0A0A0B;
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .auth-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(255, 255, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .auth-button:active {
+      transform: translateY(0);
+    }
+
+    .auth-toggle {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 16px;
+    }
+
+    .auth-toggle button {
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      cursor: pointer;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    .auth-error {
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      color: #FF8080;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .auth-loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    /* ===== DASHBOARD PAGE ===== */
+    #dashboardPage {
+      display: none;
+      padding: 20px;
+    }
+
+    #dashboardPage.active {
+      display: block;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .dashboard-user {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .logout-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 107, 107, 0.2);
+    }
+
+    .dashboard-content {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .dash-title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 14px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #C7C4BC 120%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    @media (max-width: 480px) {
+      .dash-title {
+        font-size: 22px;
+      }
+    }
+
+    /* ===== GOAL TICKER ===== */
+    .ticker-row {
+      margin-bottom: 18px;
+      display: flex;
+      gap: 4px;
+      flex-direction: column;
+    }
+
+    .goal-ticker {
+      display: flex;
+      gap: 10px;
+      padding: 7px 12px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.30) 100%);
+      background-image:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.30) 100%),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0, rgba(255, 255, 255, 0.025) 1px, transparent 1px, transparent 3px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      position: relative;
+      overflow: hidden;
+      align-items: center;
+    }
+
+    .goal-ticker::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -40%;
+      width: 30%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+      animation: sweep 8s ease-in-out infinite;
+    }
+
+    @keyframes sweep {
+      0% { left: -40%; }
+      100% { left: 110%; }
+    }
+
+    .goal-ticker-led {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .goal-ticker-led-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px rgba(107, 227, 164, 0.7);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.85); }
+    }
+
+    .goal-ticker-label {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+    }
+
+    .goal-ticker-stage {
+      flex: 1;
+      height: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .goal-ticker-row {
+      display: flex;
+      gap: 8px;
+      height: 22px;
+      align-items: center;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .goal-ticker-row.is-leaving {
+      animation: ticker-leave 0.45s cubic-bezier(0.55, 0, 0.55, 1) forwards;
+    }
+
+    .goal-ticker-row.is-entering {
+      animation: ticker-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes ticker-leave {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-100%); }
+    }
+
+    @keyframes ticker-enter {
+      0% { opacity: 0; transform: translateY(100%); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .goal-ticker-status {
+      width: 18px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .goal-ticker-status[data-status="done"] {
+      color: var(--success);
+    }
+
+    .goal-ticker-status[data-status="pending"],
+    .goal-ticker-status[data-status="empty"] {
+      color: var(--text-tertiary);
+    }
+
+    .goal-ticker-text {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .goal-ticker-meta {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 480px) {
+      .goal-ticker {
+        padding: 9px 12px;
+      }
+      .goal-ticker-label {
+        font-size: 9px;
+        letter-spacing: 0.14em;
+      }
+      .goal-ticker-row {
+        font-size: 12px;
+      }
+      .goal-ticker-meta {
+        font-size: 10px;
+        padding: 2px 7px;
+      }
+    }
+
+    /* ===== DAY RING ===== */
+    .day-ring-container {
+      display: flex;
+      gap: 26px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(24px) saturate(1.2);
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .day-ring-svg {
+      width: 168px;
+      height: 168px;
+      position: relative;
+    }
+
+    .day-ring-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .day-ring-percentage {
+      font-size: 40px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+    }
+
+    .day-ring-phase {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-top: 5px;
+    }
+
+    .day-ring-clock {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+    }
+
+    .day-ring-info {
+      max-width: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .day-ring-status {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .day-ring-remaining {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .day-ring-hours {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    @media (max-width: 480px) {
+      .day-ring-svg {
+        width: 144px;
+        height: 144px;
+      }
+      .day-ring-percentage {
+        font-size: 32px;
+      }
+      .day-ring-status {
+        font-size: 13px;
+      }
+    }
+
+    /* ===== SECTION & CARDS ===== */
+    .section {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 18px;
+      height: 1px;
+      background: var(--text-tertiary);
+      opacity: 0.6;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent);
+    }
+
+    .gm-card {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(24px) saturate(1.2);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      margin-bottom: 16px;
+      transition: all 0.3s;
+    }
+
+    .gm-card.gm-all-done {
+      background: rgba(107, 227, 164, 0.04);
+    }
+
+    .gm-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .gm-card-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .gm-card-eyebrow {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+
+    .gm-progress-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .gm-progress-num {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -0.045em;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-primary);
+    }
+
+    .gm-card.gm-all-done .gm-progress-num {
+      color: var(--success);
+    }
+
+    .gm-progress-total {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 18px;
+      color: var(--text-tertiary);
+    }
+
+    .gm-progress-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+    }
+
+    .gm-card.gm-all-done .gm-progress-label {
+      color: var(--success);
+    }
+
+    .gm-streak {
+      display: inline-flex;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-tertiary);
+      font-size: 12px;
+      align-items: center;
+    }
+
+    .gm-streak.gm-streak-active {
+      background: rgba(242, 192, 99, 0.10);
+      color: var(--warning);
+      border: 1px solid rgba(242, 192, 99, 0.32);
+    }
+
+    .gm-streak-icon {
+      font-size: 13px;
+    }
+
+    .gm-streak.gm-streak-active .gm-streak-icon {
+      filter: drop-shadow(0 0 6px rgba(242, 192, 99, 0.6));
+    }
+
+    .gm-streak-num {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .gm-streak-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+    }
+
+    .gm-bar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+      height: 6px;
+    }
+
+    .gm-bar:empty {
+      display: none;
+    }
+
+    .gm-bar-seg {
+      flex: 1;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      transition: all 0.3s;
+    }
+
+    .gm-bar-seg-done {
+      background: var(--success);
+      box-shadow: 0 0 6px rgba(107, 227, 164, 0.40);
+    }
+
+    .goal-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .empty-state {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      font-style: italic;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .goal-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      align-items: center;
+      transition: all 0.2s;
+    }
+
+    .goal-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .goal-item.goal-done {
+      opacity: 0.45;
+      background: rgba(107, 227, 164, 0.04);
+    }
+
+    .goal-item.goal-done .goal-text {
+      text-decoration: line-through;
+      text-decoration-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .goal-item.goal-queued {
+      background: rgba(242, 192, 99, 0.10);
+      border-left: 3px solid var(--warning);
+    }
+
+    .goal-item.goal-queued .goal-text {
+      color: #FFE2A8;
+    }
+
+    .goal-drag-handle {
+      width: 14px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      cursor: grab;
+      letter-spacing: -2px;
+      color: var(--text-tertiary);
+      font-size: 12px;
+    }
+
+    .goal-item:hover .goal-drag-handle {
+      opacity: 1;
+    }
+
+    .goal-checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      border: 1.5px solid rgba(255, 255, 255, 0.18);
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .goal-checkbox:checked {
+      background: var(--success);
+      border-color: var(--success);
+      box-shadow: 0 0 12px rgba(107, 227, 164, 0.40);
+    }
+
+    .goal-checkbox::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      color: #0A0A0B;
+      font-size: 12px;
+      font-weight: 700;
+      animation: checkmark 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .goal-checkbox:checked::after {
+      animation: checkmark 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes checkmark {
+      0% { transform: translate(-50%, -50%) scale(0); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    .goal-text {
+      flex: 1;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-primary);
+      word-break: break-word;
+    }
+
+    .goal-text[contenteditable="true"] {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      padding: 2px 4px;
+      outline: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .goal-queue-btn {
+      font-size: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      opacity: 0.55;
+      transition: all 0.2s;
+    }
+
+    .goal-queue-btn.gm-queue-active {
+      color: var(--warning);
+      opacity: 1;
+      filter: drop-shadow(0 0 4px rgba(242, 192, 99, 0.65));
+    }
+
+    .goal-queue-btn.is-queue-flashing {
+      animation: gm-queue-flash 0.48s ease-out;
+    }
+
+    @keyframes gm-queue-flash {
+      0% { background: transparent; transform: scale(1); }
+      50% { background: rgba(242, 192, 99, 0.32); transform: scale(1.015); }
+      100% { background: transparent; transform: scale(1); }
+    }
+
+    .goal-delete {
+      font-size: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      opacity: 0.5;
+      transition: all 0.2s;
+    }
+
+    .goal-item:hover .goal-delete {
+      opacity: 1;
+      color: var(--danger);
+    }
+
+    .show-more-row {
+      padding: 12px 14px;
+      text-align: center;
+      border: 1px dashed rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .show-more-row:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .goal-input-wrap {
+      display: flex;
+      gap: 8px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      margin-top: 14px;
+    }
+
+    .goal-input {
+      flex: 1;
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--text-primary);
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .goal-input:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .goal-input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .goal-add-btn {
+      padding: 11px 20px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      background: linear-gradient(180deg, #FFFFFF 0%, #E8E5DD 100%);
+      color: #0A0A0B;
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .goal-add-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(255, 255, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .goal-add-btn:active {
+      transform: translateY(0);
+    }
+
+    .goal-polish-btn {
+      padding: 11px 20px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .goal-polish-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .polish-status {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 6px;
+      min-height: 16px;
+    }
+
+    .gm-card-tomorrow {
+      /* Tomorrow card specific styles */
+    }
+
+    .gm-card-tomorrow .gm-progress-row {
+      display: none;
+    }
+
+    .gm-card-tomorrow .goal-checkbox:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .gm-card-tomorrow .goal-queue-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .gm-tomorrow-count {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-tertiary);
+    }
+
+    .gm-card-tomorrow-subtitle {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .push-remaining-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      background: transparent;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+      margin-bottom: 16px;
+    }
+
+    .push-remaining-btn:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+    }
+
+    .sync-indicator {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .sync-indicator.active {
+      opacity: 1;
+    }
+
+    .sync-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      margin-right: 6px;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    .sync-indicator.error .sync-dot {
+      background: var(--danger);
+      animation: none;
+    }
+
+    /* New premium variables and overrides */
+    :root {
+      --text-primary: #FAFAFA;
+      --text-secondary: #B8B6B0;
+      --text-tertiary: #76746E;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --accent: #8B5CF6;
+      --accent-glow: rgba(139, 92, 246, 0.15);
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.05);
+      --card-border-hover: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ===== TABS ===== */
+    .dash-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      padding: 4px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      width: fit-content;
+      backdrop-filter: blur(10px);
+    }
+
+    .dash-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dash-tab-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .dash-tab-btn.active {
+      color: #000;
+      background: #FAFAFA;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== MEDITATION VIEW ===== */
+    .meditation-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 850px) {
+      .meditation-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .breathing-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      backdrop-filter: blur(20px);
+      text-align: center;
+      position: relative;
+    }
+
+    .breathing-circle-wrap {
+      width: 220px;
+      height: 220px;
+      position: relative;
+      margin: 30px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .breathing-outer-ring {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid rgba(139, 92, 246, 0.1);
+      position: absolute;
+    }
+
+    .breathing-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.6) 0%, rgba(139, 92, 246, 0.2) 70%);
+      box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+      transition: all 4s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Breathing animations states */
+    .breathing-circle.inhale {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.8) 0%, rgba(139, 92, 246, 0.3) 70%);
+      box-shadow: 0 0 50px rgba(139, 92, 246, 0.6);
+    }
+
+    .breathing-circle.hold {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.8) 0%, rgba(245, 158, 11, 0.3) 70%);
+      box-shadow: 0 0 50px rgba(245, 158, 11, 0.6);
+    }
+
+    .breathing-circle.exhale {
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.6) 0%, rgba(139, 92, 246, 0.2) 70%);
+      box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+    }
+
+    .breathing-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .meditation-timer {
+      font-family: 'Outfit', sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .timer-presets {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .preset-btn {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .preset-btn:hover, .preset-btn.active {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: var(--text-primary);
+    }
+
+    .timer-controls {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .control-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .control-btn-play {
+      background: #FAFAFA;
+      color: #000;
+      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.2);
+    }
+
+    .control-btn-play:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .control-btn-reset {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-secondary);
+    }
+
+    .control-btn-reset:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+    }
+
+    .lessons-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(20px);
+    }
+
+    .lessons-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .lesson-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .lesson-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.08);
+      transform: translateX(2px);
+    }
+
+    .lesson-item.active {
+      border-color: var(--accent);
+      background: rgba(139, 92, 246, 0.05);
+    }
+
+    .lesson-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .lesson-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .lesson-duration {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .lesson-play-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+
+    .lesson-item:hover .lesson-play-icon, .lesson-item.active .lesson-play-icon {
+      background: var(--text-primary);
+      color: #000;
+    }
+
+    /* Embedded Audio Player controls */
+    .audio-player-container {
+      margin-top: 24px;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .player-track-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .player-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .player-time {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    .player-progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .player-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* ===== FINANCE VIEW ===== */
+    .finance-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .finance-summary {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .finance-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .finance-card-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .finance-card-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-top: 8px;
+    }
+
+    .finance-card-value.income { color: var(--success); }
+    .finance-card-value.expense { color: var(--danger); }
+
+    .finance-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 850px) {
+      .finance-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .finance-form-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(20px);
+    }
+
+    .finance-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .finance-toggle-group {
+      display: flex;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      padding: 3px;
+      border-radius: 10px;
+    }
+
+    .finance-toggle-btn {
+      flex: 1;
+      padding: 8px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .finance-toggle-btn.active.income {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .finance-toggle-btn.active.expense {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .budget-progress-container {
+      margin-top: 16px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+    }
+
+    .budget-progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .budget-progress-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .budget-progress-bar-fill {
+      height: 100%;
+      background: var(--success);
+      width: 0%;
+      transition: width 0.4s ease-out, background-color 0.3s;
+    }
+
+    .budget-progress-bar-fill.warning {
+      background: var(--warning);
+    }
+
+    .budget-progress-bar-fill.danger {
+      background: var(--danger);
+    }
+
+    .transactions-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(20px);
+    }
+
+    .transactions-filter-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .finance-select {
+      padding: 9px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .finance-select option {
+      background: #0d0d0d;
+      color: var(--text-primary);
+    }
+
+    .transactions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .transactions-list::-webkit-scrollbar, .goal-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .transactions-list::-webkit-scrollbar-thumb, .goal-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+    }
+
+    .transaction-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+
+    .transaction-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .transaction-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .category-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .category-icon.food { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+    .category-icon.rent { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+    .category-icon.transport { background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
+    .category-icon.entertainment { background: rgba(139, 92, 246, 0.1); color: var(--accent); }
+    .category-icon.utilities { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+    .category-icon.other { background: rgba(118, 116, 110, 0.1); color: var(--text-secondary); }
+    .category-icon.income { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+
+    .transaction-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .transaction-desc {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .transaction-meta {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    .transaction-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .transaction-amount {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .transaction-amount.income { color: var(--success); }
+    .transaction-amount.expense { color: var(--danger); }
+
+    .transaction-delete {
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      font-size: 16px;
+      transition: color 0.2s;
+    }
+
+    .transaction-delete:hover {
+      color: var(--danger);
+    }
+
+    .tab-icon {
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .category-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+
+    .badge-food { background: rgba(245, 158, 11, 0.12); color: var(--warning); }
+    .badge-rent { background: rgba(16, 185, 129, 0.12); color: var(--success); }
+    .badge-transport { background: rgba(59, 130, 246, 0.12); color: #3B82F6; }
+    .badge-entertainment { background: rgba(139, 92, 246, 0.12); color: var(--accent); }
+    .badge-utilities { background: rgba(239, 68, 68, 0.12); color: var(--danger); }
+    .badge-other { background: rgba(118, 116, 110, 0.12); color: var(--text-secondary); }
+    .badge-income { background: rgba(16, 185, 129, 0.12); color: var(--success); }
+
+    .transaction-delete-btn {
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .transaction-delete-btn:hover {
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .lesson-item.playing {
+      border-color: var(--accent);
+      background: rgba(139, 92, 246, 0.05);
+    }
+
+    .lesson-item.playing .lesson-play-icon {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* Responsive section grid fix */
+    .section {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <!-- AUTH PAGE -->
+  <div id="authPage">
+    <div class="auth-container">
+      <h1 class="auth-title">Dashboard</h1>
+      <p class="auth-subtitle" id="authSubtitle">Sign in to your account</p>
+      <div id="authError" class="auth-error" style="display: none;"></div>
+      <form class="auth-form" id="authForm">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="authEmail" class="form-input" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="authPassword" class="form-input" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="auth-button" id="authSubmit">Sign In</button>
+      </form>
+      <div class="auth-toggle">
+        <span id="authToggleText">Don't have an account? </span>
+        <button type="button" id="authToggleBtn">Sign up</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div id="dashboardPage">
+    <div class="dashboard-header">
+      <div class="dashboard-user">
+        Logged in as <strong id="userEmail"></strong>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+
+    <div class="dashboard-content">
+      <h1 class="dash-title">My Dashboard</h1>
+
+      <!-- NAV TABS -->
+      <div class="dash-tabs" id="dashTabs">
+        <button class="dash-tab-btn active" data-tab="overview">
+          <svg class="tab-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          Overview
+        </button>
+        <button class="dash-tab-btn" data-tab="meditation">
+          <svg class="tab-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle></svg>
+          Meditation
+        </button>
+        <button class="dash-tab-btn" data-tab="finance">
+          <svg class="tab-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          Finance
+        </button>
+      </div>
+
+      <!-- OVERVIEW PANEL -->
+      <div id="overviewPanel" class="tab-panel active">
+
+      <!-- GOAL TICKER -->
+      <div class="ticker-row">
+        <div class="goal-ticker" id="goalTicker" aria-live="polite" aria-atomic="true">
+          <div class="goal-ticker-led"><span class="goal-ticker-led-dot"></span></div>
+          <div class="goal-ticker-label">GOALS</div>
+          <div class="goal-ticker-stage" id="goalTickerStage">
+            <div class="goal-ticker-row">
+              <span class="goal-ticker-status" data-status="">—</span>
+              <span class="goal-ticker-text">Loading…</span>
+            </div>
+          </div>
+          <div class="goal-ticker-meta" id="goalTickerMeta">0/0</div>
+        </div>
+      </div>
+
+      <!-- DAY RING -->
+      <div class="day-ring-container">
+        <div class="day-ring-svg">
+          <svg viewBox="0 0 120 120" style="width: 100%; height: 100%;">
+            <defs>
+              <filter id="ringGlow">
+                <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+            <circle id="dayRingFill" cx="60" cy="60" r="52" fill="none" stroke="#FFD89E" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73" transform="rotate(-90 60 60)" filter="url(#ringGlow)" style="transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);"/>
+          </svg>
+          <div class="day-ring-overlay">
+            <div class="day-ring-percentage" id="dayRingPercentage">—</div>
+            <div class="day-ring-phase" id="dayRingPhase">SLEEPING</div>
+            <div class="day-ring-clock" id="dayRingClock">—</div>
+          </div>
+        </div>
+        <div class="day-ring-info">
+          <div class="day-ring-status" id="dayRingStatus">😴 Still sleeping</div>
+          <div class="day-ring-remaining" id="dayRingRemaining">—</div>
+          <div class="day-ring-hours">8:00 AM – 12:00 AM</div>
+        </div>
+      </div>
+
+      <!-- TO DO LIST SECTION -->
+      <div class="section">
+        <h2 class="section-title">To Do List</h2>
+
+        <!-- TODAY CARD -->
+        <div class="gm-card" id="gmCardToday">
+          <div class="gm-card-header">
+            <div class="gm-card-left">
+              <div class="gm-card-eyebrow" id="todayLabel">Today — Sat, May 9</div>
+              <div class="gm-progress-row">
+                <div class="gm-progress-num" id="gmProgressNum">0</div>
+                <div class="gm-progress-total" id="gmProgressTotal">/ 0</div>
+                <div class="gm-progress-label" id="gmProgressLabel">no goals yet</div>
+              </div>
+            </div>
+            <div class="gm-streak" id="gmStreak">
+              <span class="gm-streak-icon">⚡</span>
+              <span class="gm-streak-num" id="gmStreakNum">0</span>
+              <span class="gm-streak-label">day streak</span>
+            </div>
+          </div>
+
+          <div class="gm-bar" id="gmBar"></div>
+
+          <ul id="goalList" class="goal-list gm-list"></ul>
+          <div id="emptyState" class="empty-state">No goals for today yet — add one below.</div>
+
+          <button class="push-remaining-btn" id="gmPushBtn" style="display: none;">Push remaining to tomorrow →</button>
+
+          <div class="goal-input-wrap gm-input-wrap">
+            <input type="text" id="goalInput" class="goal-input" placeholder="Add a goal for today…" />
+            <button type="button" class="goal-add-btn" id="goalAddBtn">+ Add</button>
+            <button type="button" class="goal-polish-btn" id="goalPolishBtn">✨ Polish</button>
+          </div>
+          <div class="polish-status" id="polishStatus"></div>
+        </div>
+
+        <!-- TOMORROW CARD -->
+        <div class="gm-card gm-card-tomorrow">
+          <div class="gm-card-header">
+            <div class="gm-card-left">
+              <div class="gm-card-eyebrow" id="tomorrowLabel">Plan tomorrow — Sun, May 10</div>
+              <div class="gm-card-tomorrow-subtitle">Write tonight, locked until 6 AM.</div>
+              <div class="gm-tomorrow-count" id="gmTomorrowCount">0 planned</div>
+            </div>
+          </div>
+
+          <ul id="tomorrowList" class="goal-list gm-list"></ul>
+          <div id="emptyStateTomorrow" class="empty-state">Nothing planned for tomorrow yet</div>
+
+          <div class="goal-input-wrap gm-input-wrap">
+            <input type="text" id="tomorrowInput" class="goal-input" placeholder="Plan something for tomorrow…" />
+            <button type="button" class="goal-add-btn" id="tomorrowAddBtn">+ Add</button>
+            <button type="button" class="goal-polish-btn" id="tomorrowPolishBtn">✨ Polish</button>
+          </div>
+          <div class="polish-status" id="tomorrowStatus"></div>
+        </div>
+      </div> <!-- Close todo-grid / section -->
+    </div> <!-- Close #overviewPanel -->
+
+    <!-- MEDITATION PANEL -->
+    <div id="meditationPanel" class="tab-panel">
+      <div class="section">
+        <h2 class="section-title">Meditation & Focus</h2>
+        <div class="meditation-grid">
+          <!-- TIMER -->
+          <div class="breathing-card">
+            <div class="breathing-circle-wrap">
+              <div class="breathing-outer-ring"></div>
+              <div class="breathing-circle" id="breathingCircle">
+                <span class="breathing-text" id="breathingText">Focus</span>
+              </div>
+            </div>
+            <div class="meditation-timer" id="meditationTimer">05:00</div>
+            
+            <div class="timer-presets">
+              <button class="preset-btn active" data-mins="5">5m</button>
+              <button class="preset-btn" data-mins="10">10m</button>
+              <button class="preset-btn" data-mins="15">15m</button>
+              <button class="preset-btn" data-mins="20">20m</button>
+            </div>
+
+            <div class="timer-controls">
+              <button class="control-btn control-btn-play" id="meditationPlayBtn">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <button class="control-btn control-btn-reset" id="meditationResetBtn">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- GUIDED LESSONS -->
+          <div class="lessons-card">
+            <h3 class="section-subtitle" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight:600; margin-bottom: 4px;">Guided Lessons</h3>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">Simple, secular sessions to train your mind.</p>
+            
+            <div class="lessons-list">
+              <div class="lesson-item" data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" data-title="Mindfulness Introduction" data-duration="6:12">
+                <div class="lesson-info">
+                  <span class="lesson-title">Mindfulness Introduction</span>
+                  <span class="lesson-duration">6 mins • Beginners</span>
+                </div>
+                <div class="lesson-play-icon">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              </div>
+              <div class="lesson-item" data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" data-title="Managing Stress" data-duration="7:05">
+                <div class="lesson-info">
+                  <span class="lesson-title">Managing Stress</span>
+                  <span class="lesson-duration">7 mins • Stress relief</span>
+                </div>
+                <div class="lesson-play-icon">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              </div>
+              <div class="lesson-item" data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" data-title="Loving-Kindness" data-duration="5:44">
+                <div class="lesson-info">
+                  <span class="lesson-title">Loving-Kindness</span>
+                  <span class="lesson-duration">5 mins • Compassion</span>
+                </div>
+                <div class="lesson-play-icon">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              </div>
+              <div class="lesson-item" data-src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" data-title="Deep Sleep Wind Down" data-duration="8:30">
+                <div class="lesson-info">
+                  <span class="lesson-title">Deep Sleep Wind Down</span>
+                  <span class="lesson-duration">8 mins • Wind down</span>
+                </div>
+                <div class="lesson-play-icon">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Audio Player widget -->
+            <div class="audio-player-container" id="audioPlayerContainer" style="display: none;">
+              <div class="player-track-info">
+                <span class="player-title" id="playerTrackTitle">Mindfulness Introduction</span>
+                <span class="player-time" id="playerTrackTime">0:00 / 0:00</span>
+              </div>
+              <div class="player-progress-bar" id="playerProgressBar">
+                <div class="player-progress-fill" id="playerProgressFill"></div>
+              </div>
+              <audio id="meditationAudio" style="display: none;"></audio>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINANCE PANEL -->
+    <div id="financePanel" class="tab-panel">
+      <div class="section">
+        <h2 class="section-title">Finance Tracker</h2>
+        
+        <!-- Summary Row -->
+        <div class="finance-summary">
+          <div class="finance-card">
+            <div class="finance-card-title">Monthly Income</div>
+            <div class="finance-card-value income" id="financeTotalIncome">$0.00</div>
+          </div>
+          <div class="finance-card">
+            <div class="finance-card-title">Monthly Expenses</div>
+            <div class="finance-card-value expense" id="financeTotalExpenses">$0.00</div>
+          </div>
+          <div class="finance-card">
+            <div class="finance-card-title">Net Balance</div>
+            <div class="finance-card-value" id="financeNetBalance">$0.00</div>
+          </div>
+        </div>
+
+        <div class="finance-grid">
+          <!-- LOGGING FORM -->
+          <div class="finance-form-card">
+            <h3 class="section-subtitle" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight:600; margin-bottom: 12px;">Add Transaction</h3>
+            
+            <div class="finance-toggle-group">
+              <button class="finance-toggle-btn active expense" id="toggleExpense">Expense</button>
+              <button class="finance-toggle-btn income" id="toggleIncome">Income</button>
+            </div>
+
+            <form class="finance-form" id="financeForm">
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <input type="text" id="financeDesc" class="form-input" placeholder="e.g. Groceries, Rent, Salary..." required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Amount ($)</label>
+                <input type="number" step="0.01" min="0.01" id="financeAmount" class="form-input" placeholder="0.00" required />
+              </div>
+              <div class="form-group" id="financeCategoryGroup">
+                <label class="form-label">Category</label>
+                <select id="financeCategory" class="finance-select">
+                  <option value="food">Food & Dining</option>
+                  <option value="rent">Rent & Housing</option>
+                  <option value="transport">Transport</option>
+                  <option value="entertainment">Entertainment</option>
+                  <option value="utilities">Utilities</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <button type="submit" class="auth-button" style="margin-top: 8px;">Add Entry</button>
+            </form>
+
+            <!-- Monthly Budget Limit Card -->
+            <div class="budget-progress-container">
+              <div class="budget-progress-header">
+                <span>Budget limit: <strong id="budgetValue">$500.00</strong></span>
+                <span id="budgetPercent">0% used</span>
+              </div>
+              <div class="budget-progress-bar-wrap">
+                <div class="budget-progress-bar-fill" id="budgetProgressBarFill"></div>
+              </div>
+              <div class="form-group" style="margin-top: 14px;">
+                <label class="form-label" style="font-size: 10px;">Set Monthly Budget Limit</label>
+                <div class="goal-input-wrap gm-input-wrap">
+                  <input type="number" id="budgetLimitInput" class="goal-input" placeholder="Set limit..." style="font-size: 13px; padding: 6px 12px;" />
+                  <button type="button" class="goal-add-btn" id="budgetLimitSaveBtn" style="padding: 6px 12px; font-size: 13px;">Save</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TRANSACTION HISTORY -->
+          <div class="transactions-card">
+            <h3 class="section-subtitle" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight:600;">Transaction Log</h3>
+            
+            <div class="transactions-filter-row">
+              <select id="filterType" class="finance-select">
+                <option value="all">All Types</option>
+                <option value="expense">Expenses Only</option>
+                <option value="income">Income Only</option>
+              </select>
+              <select id="filterCategory" class="finance-select">
+                <option value="all">All Categories</option>
+                <option value="food">Food</option>
+                <option value="rent">Rent</option>
+                <option value="transport">Transport</option>
+                <option value="entertainment">Entertainment</option>
+                <option value="utilities">Utilities</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="transactions-list" id="transactionsList">
+              <!-- Transactions will load here dynamically -->
+            </div>
+            <div id="financeEmptyState" class="empty-state" style="margin-top: 20px;">No transactions logged yet.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div> <!-- Close .dashboard-content -->
+
+    <div class="sync-indicator" id="syncIndicator">
+      <span class="sync-dot"></span><span id="syncText">Syncing…</span>
+    </div>
+  </div>
+
+  <script type="module">
+    // ===== SUPABASE CONFIG =====
+    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://udkdkqnnhhcyddmlbqas.supabase.co';
+    const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVka2RrcW5uaGhjeWRkbWxicWFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNjcyNzIsImV4cCI6MjA5NDY0MzI3Mn0.UqLPqOwBc8t-_Mu_9AsY7C4xecHRxcMM6yCyMCbOTAY';
+
+    // ===== CONSTANTS =====
+    const WAKE_HOUR = 8;
+    const SLEEP_HOUR = 24;
+    const ANTHROPIC_API_KEY = '';
+
+    // ===== STATE =====
+    let currentUser = null;
+    let isSignUp = false;
+    let tickerCycleIdx = 0;
+    let tickerInterval = null;
+    let dayRingInterval = null;
+    let syncInterval = null;
+    let pendingRemote = null;
+    let lastSyncTime = 0;
+    const SYNC_DEBOUNCE_MS = 300;
+    const SYNC_POLL_MS = 5000;
+
+    // ===== STORAGE HELPERS =====
+    function storeGet(key) {
+      try {
+        return JSON.parse(localStorage.getItem(key));
+      } catch {
+        return null;
+      }
+    }
+
+    function storeSet(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+      triggerCloudSync();
+    }
+
+    function storeDelete(key) {
+      localStorage.removeItem(key);
+      triggerCloudSync();
+    }
+
+    function storeListKeys(prefix) {
+      const keys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith(prefix)) keys.push(key);
+      }
+      return keys;
+    }
+
+    // ===== CLOUD SYNC =====
+    let syncTimeout = null;
+
+    function triggerCloudSync() {
+      clearTimeout(syncTimeout);
+      syncTimeout = setTimeout(() => {
+        pushToCloud();
+      }, SYNC_DEBOUNCE_MS);
+    }
+
+    async function pushToCloud() {
+      if (!currentUser) return;
+
+      const token = localStorage.getItem('auth_token');
+      if (!token) return;
+
+      const syncData = {};
+      const allKeys = Object.keys(localStorage);
+
+      for (const key of allKeys) {
+        if (key.startsWith('goals:') || key === 'goal_streak_v1' || key === 'finance_v1' || key === 'meditation_v1') {
+          syncData[key] = storeGet(key);
+        }
+      }
+
+      try {
+        const response = await fetch('/api/sync', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ data: syncData }),
+        });
+
+        if (!response.ok) {
+          console.error('Sync push failed:', response.status);
+          showSyncError();
+        } else {
+          showSyncSuccess();
+        }
+      } catch (error) {
+        console.error('Sync push error:', error);
+        showSyncError();
+      }
+    }
+
+    async function pullFromCloud() {
+      if (!currentUser) return;
+
+      const token = localStorage.getItem('auth_token');
+      if (!token) return;
+
+      try {
+        const response = await fetch('/api/sync', {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (!response.ok) return;
+
+        const { data } = await response.json();
+        if (!data) return;
+
+        // Check if user is actively editing
+        const activeElement = document.activeElement;
+        const isEditing = activeElement && (
+          activeElement.tagName === 'INPUT' ||
+          activeElement.tagName === 'TEXTAREA' ||
+          activeElement.contentEditable === 'true'
+        );
+
+        if (isEditing) {
+          pendingRemote = data;
+          return;
+        }
+
+        // Apply remote data
+        let changed = false;
+        for (const [key, value] of Object.entries(data)) {
+          const local = storeGet(key);
+          if (JSON.stringify(local) !== JSON.stringify(value)) {
+            localStorage.setItem(key, JSON.stringify(value));
+            changed = true;
+          }
+        }
+
+        if (changed) {
+          loadToday();
+          loadTomorrow();
+          renderStreak();
+          updateDayRing();
+          if (typeof loadFinance === 'function') loadFinance();
+          if (typeof loadMeditation === 'function') loadMeditation();
+        }
+      } catch (error) {
+        console.error('Sync pull error:', error);
+      }
+    }
+
+    function showSyncSuccess() {
+      const indicator = document.getElementById('syncIndicator');
+      indicator.classList.remove('error');
+      indicator.classList.add('active');
+      clearTimeout(indicator.hideTimeout);
+      indicator.hideTimeout = setTimeout(() => {
+        indicator.classList.remove('active');
+      }, 2000);
+    }
+
+    function showSyncError() {
+      const indicator = document.getElementById('syncIndicator');
+      indicator.classList.add('error');
+      indicator.classList.add('active');
+      document.getElementById('syncText').textContent = 'Sync failed';
+    }
+
+    // ===== DATE HELPERS =====
+    function getActiveDateString() {
+      const now = new Date();
+      if (now.getHours() < 6) {
+        now.setDate(now.getDate() - 1);
+      }
+      return now.toISOString().split('T')[0];
+    }
+
+    function getTomorrowDateString() {
+      const now = new Date();
+      let tomorrow = new Date(now);
+      if (now.getHours() < 6) {
+        // Active day is yesterday, so tomorrow is today
+        return now.toISOString().split('T')[0];
+      } else {
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return tomorrow.toISOString().split('T')[0];
+      }
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr + 'T00:00:00');
+      const weekday = date.toLocaleDateString('en-US', { weekday: 'short' });
+      const month = date.toLocaleDateString('en-US', { month: 'short' });
+      const day = date.getDate();
+      return `${weekday}, ${month} ${day}`;
+    }
+
+    // ===== AUTH =====
+    // Safe JSON parse: checks Content-Type and handles empty bodies gracefully
+    async function safeParseJSON(response) {
+      const contentType = response.headers.get('Content-Type') || '';
+      if (!contentType.includes('application/json')) {
+        const text = await response.text().catch(() => '');
+        throw new Error(text.slice(0, 200) || `Server returned ${response.status} (non-JSON)`);
+      }
+      try {
+        return await response.json();
+      } catch {
+        throw new Error(`Server returned ${response.status} with unparseable response`);
+      }
+    }
+
+    // Map raw Supabase errors to user-friendly messages
+    function humanizeAuthError(raw) {
+      const map = {
+        'email rate limit exceeded': 'Too many attempts — please wait a minute and try again.',
+        'Invalid login credentials': 'Incorrect email or password.',
+        'User already registered': 'An account with this email already exists. Sign in instead.',
+        'Password should be at least 6 characters': 'Password must be at least 6 characters.',
+        'Unable to validate email address': 'Please enter a valid email address.',
+      };
+      for (const [key, val] of Object.entries(map)) {
+        if ((raw || '').toLowerCase().includes(key.toLowerCase())) return val;
+      }
+      return raw;
+    }
+
+    async function signIn(email, password) {
+      try {
+        const response = await fetch('/api/auth/signin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await safeParseJSON(response);
+
+        if (!response.ok) {
+          showAuthError(humanizeAuthError(data.error) || 'Sign in failed');
+          return;
+        }
+
+        currentUser = data.user;
+        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem('user_email', email);
+
+        showDashboard();
+        // pullFromCloud is already called by showDashboard → startCloudSync
+      } catch (error) {
+        showAuthError('Network error: ' + error.message);
+      }
+    }
+
+    async function signUp(email, password) {
+      try {
+        const response = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await safeParseJSON(response);
+
+        if (!response.ok) {
+          showAuthError(humanizeAuthError(data.error) || 'Sign up failed');
+          return;
+        }
+
+        // Email confirmation required — don't log in yet
+        if (!data.token) {
+          showAuthError(data.message || 'Please check your email to confirm your account.');
+          document.getElementById('authSubmit').classList.remove('auth-loading');
+          return;
+        }
+
+        currentUser = data.user;
+        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem('user_email', email);
+
+        showDashboard();
+      } catch (error) {
+        showAuthError('Network error: ' + error.message);
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user_email');
+      showAuthPage();
+    }
+
+    function showAuthError(message) {
+      const errorEl = document.getElementById('authError');
+      errorEl.textContent = message;
+      errorEl.style.display = 'block';
+      document.getElementById('authSubmit').classList.remove('auth-loading');
+    }
+
+    function showAuthPage() {
+      document.getElementById('authPage').style.display = 'flex';
+      document.getElementById('dashboardPage').classList.remove('active');
+      isSignUp = false;
+      updateAuthUI();
+    }
+
+    function showDashboard() {
+      document.getElementById('authPage').style.display = 'none';
+      document.getElementById('dashboardPage').classList.add('active');
+      document.getElementById('userEmail').textContent = currentUser.email;
+      loadToday();
+      loadTomorrow();
+      renderStreak();
+      updateDayRing();
+      startTicker();
+      startDayRingUpdate();
+      startCloudSync();
+      loadFinance();
+      loadMeditation();
+    }
+
+    function updateAuthUI() {
+      const subtitle = document.getElementById('authSubtitle');
+      const submit = document.getElementById('authSubmit');
+      const toggleText = document.getElementById('authToggleText');
+      const toggleBtn = document.getElementById('authToggleBtn');
+
+      if (isSignUp) {
+        subtitle.textContent = 'Create a new account';
+        submit.textContent = 'Sign Up';
+        toggleText.textContent = 'Already have an account? ';
+        toggleBtn.textContent = 'Sign in';
+      } else {
+        subtitle.textContent = 'Sign in to your account';
+        submit.textContent = 'Sign In';
+        toggleText.textContent = "Don't have an account? ";
+        toggleBtn.textContent = 'Sign up';
+      }
+    }
+
+    // ===== TICKER =====
+    function buildTickerItems() {
+      const todayKey = `goals:${getActiveDateString()}`;
+      const goals = storeGet(todayKey) || [];
+      const pending = goals.filter(g => !g.done);
+      const total = goals.length;
+
+      if (total === 0) {
+        return [{ status: 'empty', text: 'No goals set for today — add one to get rolling.' }];
+      }
+
+      if (pending.length === 0) {
+        return [{ status: 'done', text: '✓ All goals done — solid day.' }];
+      }
+
+      return pending.map(g => ({ status: 'pending', text: g.text }));
+    }
+
+    function tick() {
+      const items = buildTickerItems();
+      const stage = document.getElementById('goalTickerStage');
+      const meta = document.getElementById('goalTickerMeta');
+      const todayKey = `goals:${getActiveDateString()}`;
+      const goals = storeGet(todayKey) || [];
+      const done = goals.filter(g => g.done).length;
+      const total = goals.length;
+
+      meta.textContent = `${done}/${total}`;
+
+      if (tickerCycleIdx >= items.length) tickerCycleIdx = 0;
+      const item = items[tickerCycleIdx];
+
+      const oldRow = stage.querySelector('.goal-ticker-row');
+      if (oldRow) {
+        oldRow.classList.add('is-leaving');
+        setTimeout(() => oldRow.remove(), 460);
+      }
+
+      const newRow = document.createElement('div');
+      newRow.className = 'goal-ticker-row is-entering';
+      newRow.innerHTML = `
+        <span class="goal-ticker-status" data-status="${item.status}">${
+          item.status === 'done' ? '✓' : item.status === 'pending' ? '○' : '·'
+        }</span>
+        <span class="goal-ticker-text">${item.text}</span>
+      `;
+      stage.appendChild(newRow);
+
+      tickerCycleIdx++;
+    }
+
+    function startTicker() {
+      tick();
+      if (tickerInterval) clearInterval(tickerInterval);
+      tickerInterval = setInterval(tick, 5000);
+    }
+
+    window.addEventListener('goals-changed', () => {
+      tickerCycleIdx = 0;
+      tick();
+    });
+
+    // ===== DAY RING =====
+    function interpolateColor(percent) {
+      const stops = [
+        { p: 0, c: [255, 216, 158] },
+        { p: 12.5, c: [255, 205, 121] },
+        { p: 25, c: [255, 227, 143] },
+        { p: 37.5, c: [255, 183, 106] },
+        { p: 50, c: [255, 149, 89] },
+        { p: 62.5, c: [243, 111, 79] },
+        { p: 75, c: [226, 93, 122] },
+        { p: 87.5, c: [123, 91, 176] },
+        { p: 100, c: [47, 58, 102] },
+      ];
+
+      let lower = stops[0];
+      let upper = stops[stops.length - 1];
+
+      for (let i = 0; i < stops.length - 1; i++) {
+        if (stops[i].p <= percent && percent <= stops[i + 1].p) {
+          lower = stops[i];
+          upper = stops[i + 1];
+          break;
+        }
+      }
+
+      const range = upper.p - lower.p;
+      const t = range === 0 ? 0 : (percent - lower.p) / range;
+
+      const r = Math.round(lower.c[0] + (upper.c[0] - lower.c[0]) * t);
+      const g = Math.round(lower.c[1] + (upper.c[1] - lower.c[1]) * t);
+      const b = Math.round(lower.c[2] + (upper.c[2] - lower.c[2]) * t);
+
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function updateDayRing() {
+      const now = new Date();
+      const hours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+
+      const percentageEl = document.getElementById('dayRingPercentage');
+      const phaseEl = document.getElementById('dayRingPhase');
+      const statusEl = document.getElementById('dayRingStatus');
+      const remainingEl = document.getElementById('dayRingRemaining');
+      const clockEl = document.getElementById('dayRingClock');
+      const fillEl = document.getElementById('dayRingFill');
+
+      const hour12 = now.getHours() % 12 || 12;
+      const minute = String(now.getMinutes()).padStart(2, '0');
+      const ampm = now.getHours() < 12 ? 'AM' : 'PM';
+      clockEl.textContent = `${hour12}:${minute} ${ampm}`;
+
+      if (hours < WAKE_HOUR) {
+        percentageEl.textContent = '—';
+        phaseEl.textContent = 'SLEEPING';
+        statusEl.textContent = '😴 Still sleeping';
+        const hoursUntil = WAKE_HOUR - hours;
+        const m = Math.floor((hoursUntil % 1) * 60);
+        remainingEl.textContent = `${Math.floor(hoursUntil)}h ${m}m until wake-up`;
+        fillEl.style.stroke = '#4D4B47';
+        fillEl.style.strokeDashoffset = '326.73';
+      } else if (hours < SLEEP_HOUR) {
+        const percent = ((hours - WAKE_HOUR) / (SLEEP_HOUR - WAKE_HOUR)) * 100;
+        percentageEl.textContent = Math.round(percent) + '%';
+
+        let phase, status;
+        if (percent < 25) {
+          phase = 'MORNING';
+          status = '☀️ Morning — fresh start';
+        } else if (percent < 50) {
+          phase = 'MIDDAY';
+          status = '⚡ Midday — keep moving';
+        } else if (percent < 75) {
+          phase = 'AFTERNOON';
+          status = '🔥 Afternoon — push it';
+        } else if (percent < 90) {
+          phase = 'EVENING';
+          status = '⏳ Evening — wrap up';
+        } else {
+          phase = 'BEDTIME';
+          status = '🌙 Bedtime soon';
+        }
+
+        phaseEl.textContent = phase;
+        statusEl.textContent = status;
+
+        const hoursLeft = SLEEP_HOUR - hours;
+        const m = Math.floor((hoursLeft % 1) * 60);
+        remainingEl.textContent = `${Math.floor(hoursLeft)}h ${m}m awake time left`;
+
+        const color = interpolateColor(percent);
+        fillEl.style.stroke = color;
+        const circumference = 2 * Math.PI * 52;
+        fillEl.style.strokeDashoffset = circumference * (1 - percent / 100);
+      } else {
+        percentageEl.textContent = '100%';
+        phaseEl.textContent = 'PAST BEDTIME';
+        statusEl.textContent = '⚠️ Past bedtime';
+        remainingEl.textContent = 'Sleep!';
+        fillEl.style.stroke = '#E25D7A';
+        fillEl.style.strokeDashoffset = '0';
+      }
+    }
+
+    function startDayRingUpdate() {
+      updateDayRing();
+      if (dayRingInterval) clearInterval(dayRingInterval);
+      dayRingInterval = setInterval(updateDayRing, 60 * 1000);
+    }
+
+    // ===== GOAL LIST =====
+    function buildGoalRow(goal, index, key, readOnly = false) {
+      const li = document.createElement('li');
+      li.className = 'goal-item';
+      if (goal.done) li.classList.add('goal-done');
+      if (goal.queued) li.classList.add('goal-queued');
+      li.draggable = !readOnly;
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'goal-checkbox';
+      checkbox.checked = goal.done;
+      checkbox.disabled = readOnly;
+
+      checkbox.addEventListener('change', () => {
+        const goals = storeGet(key) || [];
+        goals[index].done = checkbox.checked;
+        if (checkbox.checked) {
+          goals[index].doneAt = Date.now();
+        } else {
+          delete goals[index].doneAt;
+        }
+        storeSet(key, goals);
+        if (key === `goals:${getActiveDateString()}`) {
+          loadToday();
+        } else {
+          loadTomorrow();
+        }
+        window.dispatchEvent(new CustomEvent('goals-changed'));
+      });
+
+      const dragHandle = document.createElement('div');
+      dragHandle.className = 'goal-drag-handle';
+      dragHandle.textContent = '⋮⋮';
+
+      const text = document.createElement('div');
+      text.className = 'goal-text';
+      text.textContent = goal.text;
+
+      text.addEventListener('click', () => {
+        if (readOnly) return;
+        makeInlineEdit(text, goal, index, key);
+      });
+
+      const queueBtn = document.createElement('button');
+      queueBtn.className = 'goal-queue-btn';
+      queueBtn.textContent = '⚡';
+      if (goal.queued) queueBtn.classList.add('gm-queue-active');
+      queueBtn.disabled = readOnly;
+
+      queueBtn.addEventListener('click', () => {
+        const goals = storeGet(key) || [];
+        goals[index].queued = !goals[index].queued;
+        storeSet(key, goals);
+        queueBtn.classList.add('is-queue-flashing');
+        setTimeout(() => {
+          if (key === `goals:${getActiveDateString()}`) {
+            loadToday();
+          } else {
+            loadTomorrow();
+          }
+          window.dispatchEvent(new CustomEvent('goals-changed'));
+        }, 480);
+      });
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'goal-delete';
+      deleteBtn.textContent = '×';
+
+      deleteBtn.addEventListener('click', () => {
+        const goals = storeGet(key) || [];
+        goals.splice(index, 1);
+        storeSet(key, goals);
+        if (key === `goals:${getActiveDateString()}`) {
+          loadToday();
+        } else {
+          loadTomorrow();
+        }
+        window.dispatchEvent(new CustomEvent('goals-changed'));
+      });
+
+      li.appendChild(dragHandle);
+      li.appendChild(checkbox);
+      li.appendChild(text);
+      li.appendChild(queueBtn);
+      li.appendChild(deleteBtn);
+
+      if (!readOnly) {
+        li.addEventListener('dragstart', (e) => {
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', index);
+        });
+
+        li.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          li.style.borderTop = '2px solid rgba(255,255,255,0.2)';
+        });
+
+        li.addEventListener('dragleave', () => {
+          li.style.borderTop = '';
+        });
+
+        li.addEventListener('drop', (e) => {
+          e.preventDefault();
+          li.style.borderTop = '';
+          const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+          const goals = storeGet(key) || [];
+          const [moved] = goals.splice(fromIdx, 1);
+          goals.splice(index, 0, moved);
+          storeSet(key, goals);
+          if (key === `goals:${getActiveDateString()}`) {
+            loadToday();
+          } else {
+            loadTomorrow();
+          }
+        });
+      }
+
+      return li;
+    }
+
+    function makeInlineEdit(textEl, goal, index, key) {
+      const original = textEl.textContent;
+      textEl.contentEditable = 'true';
+      textEl.focus();
+      const range = document.createRange();
+      range.selectNodeContents(textEl);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+
+      function commit() {
+        const newText = textEl.textContent.trim();
+        textEl.contentEditable = 'false';
+
+        if (newText && newText !== original) {
+          const goals = storeGet(key) || [];
+          goals[index].text = newText;
+          storeSet(key, goals);
+          if (key === `goals:${getActiveDateString()}`) {
+            loadToday();
+          } else {
+            loadTomorrow();
+          }
+          window.dispatchEvent(new CustomEvent('goals-changed'));
+        } else {
+          textEl.textContent = original;
+        }
+      }
+
+      textEl.addEventListener('blur', commit, { once: true });
+
+      textEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          commit();
+        } else if (e.key === 'Escape') {
+          textEl.contentEditable = 'false';
+          textEl.textContent = original;
+        }
+      }, { once: true });
+    }
+
+    function renderListInto(goals, listEl, emptyEl, key, readOnly = false) {
+      listEl.innerHTML = '';
+
+      if (goals.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+      }
+
+      emptyEl.style.display = 'none';
+
+      const visible = goals.slice(0, 5);
+      const hidden = goals.slice(5);
+
+      visible.forEach((goal, idx) => {
+        listEl.appendChild(buildGoalRow(goal, idx, key, readOnly));
+      });
+
+      if (hidden.length > 0) {
+        const showMoreRow = document.createElement('div');
+        showMoreRow.className = 'show-more-row';
+        showMoreRow.textContent = `Show ${hidden.length} more ▾`;
+        showMoreRow.addEventListener('click', () => {
+          hidden.forEach((goal, idx) => {
+            listEl.appendChild(buildGoalRow(goal, 5 + idx, key, readOnly));
+          });
+          showMoreRow.remove();
+        });
+        listEl.appendChild(showMoreRow);
+      }
+    }
+
+    function renderTodayHeader() {
+      const todayKey = `goals:${getActiveDateString()}`;
+      const goals = storeGet(todayKey) || [];
+      const done = goals.filter(g => g.done).length;
+      const total = goals.length;
+
+      document.getElementById('gmProgressNum').textContent = done;
+      document.getElementById('gmProgressTotal').textContent = `/ ${total}`;
+
+      if (total === 0) {
+        document.getElementById('gmProgressLabel').textContent = 'no goals yet';
+      } else if (done === total) {
+        document.getElementById('gmProgressLabel').textContent = 'all done — solid day';
+      } else {
+        document.getElementById('gmProgressLabel').textContent = 'complete';
+      }
+
+      const barEl = document.getElementById('gmBar');
+      barEl.innerHTML = '';
+      goals.forEach(goal => {
+        const seg = document.createElement('div');
+        seg.className = 'gm-bar-seg';
+        if (goal.done) seg.classList.add('gm-bar-seg-done');
+        barEl.appendChild(seg);
+      });
+
+      const card = document.getElementById('gmCardToday');
+      if (done === total && total > 0) {
+        card.classList.add('gm-all-done');
+      } else {
+        card.classList.remove('gm-all-done');
+      }
+
+      const pushBtn = document.getElementById('gmPushBtn');
+      const unchecked = goals.filter(g => !g.done);
+      pushBtn.style.display = unchecked.length > 0 ? 'block' : 'none';
+
+      document.getElementById('todayLabel').textContent = `Today — ${formatDate(getActiveDateString())}`;
+    }
+
+    function renderStreak() {
+      const streak = storeGet('goal_streak_v1') || { count: 0, lastProcessedDate: null };
+      document.getElementById('gmStreakNum').textContent = streak.count;
+      const streakEl = document.getElementById('gmStreak');
+      if (streak.count > 0) {
+        streakEl.classList.add('gm-streak-active');
+      } else {
+        streakEl.classList.remove('gm-streak-active');
+      }
+    }
+
+    function renderTomorrowCount() {
+      const tomorrowKey = `goals:${getTomorrowDateString()}`;
+      const goals = storeGet(tomorrowKey) || [];
+      document.getElementById('gmTomorrowCount').textContent = `${goals.length} planned`;
+      document.getElementById('tomorrowLabel').textContent = `Plan tomorrow — ${formatDate(getTomorrowDateString())}`;
+    }
+
+    function loadToday() {
+      const todayKey = `goals:${getActiveDateString()}`;
+      const goals = storeGet(todayKey) || [];
+      renderListInto(goals, document.getElementById('goalList'), document.getElementById('emptyState'), todayKey, false);
+      renderTodayHeader();
+    }
+
+    function loadTomorrow() {
+      const tomorrowKey = `goals:${getTomorrowDateString()}`;
+      const goals = storeGet(tomorrowKey) || [];
+      renderListInto(goals, document.getElementById('tomorrowList'), document.getElementById('emptyStateTomorrow'), tomorrowKey, true);
+      renderTomorrowCount();
+    }
+
+    // ===== ADD HANDLERS =====
+    function makeAddHandlers(input, addBtn, polishBtn, getKey, statusEl, reload) {
+      addBtn.addEventListener('click', async () => {
+        const text = input.value.trim();
+        if (!text) return;
+
+        const key = getKey();
+        const goals = storeGet(key) || [];
+        goals.push({ text, done: false });
+        storeSet(key, goals);
+        input.value = '';
+        reload();
+        window.dispatchEvent(new CustomEvent('goals-changed'));
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          addBtn.click();
+        }
+      });
+
+      polishBtn.addEventListener('click', async () => {
+        const text = input.value.trim();
+        if (!text) return;
+
+        const key = getKey();
+
+        if (!ANTHROPIC_API_KEY) {
+          const goals = storeGet(key) || [];
+          goals.push({ text, done: false });
+          storeSet(key, goals);
+          input.value = '';
+          statusEl.textContent = 'Polish needs an Anthropic API key — added as-typed.';
+          statusEl.style.color = 'var(--text-tertiary)';
+          setTimeout(() => { statusEl.textContent = ''; }, 3500);
+          reload();
+          window.dispatchEvent(new CustomEvent('goals-changed'));
+          return;
+        }
+
+        try {
+          const response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': ANTHROPIC_API_KEY,
+              'anthropic-version': '2023-06-01',
+            },
+            body: JSON.stringify({
+              model: 'claude-sonnet-4-5',
+              max_tokens: 1000,
+              messages: [{
+                role: 'user',
+                content: `Clean up this goal and return it as a one-element JSON array of strings, no preamble, no fences: "${text}"`
+              }]
+            })
+          });
+
+          if (!response.ok) throw new Error('API error');
+          const data = await response.json();
+          const content = data.content[0].text;
+          const polished = JSON.parse(content)[0];
+
+          const goals = storeGet(key) || [];
+          goals.push({ text: polished, done: false });
+          storeSet(key, goals);
+          input.value = '';
+          statusEl.textContent = '';
+          reload();
+          window.dispatchEvent(new CustomEvent('goals-changed'));
+        } catch (error) {
+          const goals = storeGet(key) || [];
+          goals.push({ text, done: false });
+          storeSet(key, goals);
+          input.value = '';
+          statusEl.textContent = 'Polish failed — added as-typed.';
+          statusEl.style.color = 'var(--danger)';
+          setTimeout(() => { statusEl.textContent = ''; }, 3500);
+          reload();
+          window.dispatchEvent(new CustomEvent('goals-changed'));
+        }
+      });
+    }
+
+    // ===== CLOUD SYNC POLLING =====
+    function startCloudSync() {
+      pullFromCloud();
+      if (syncInterval) clearInterval(syncInterval);
+      syncInterval = setInterval(pullFromCloud, SYNC_POLL_MS);
+
+      window.addEventListener('focus', pullFromCloud);
+      window.addEventListener('visibilitychange', () => {
+        if (!document.hidden) pullFromCloud();
+      });
+
+      document.addEventListener('focusout', () => {
+        if (pendingRemote) {
+          let changed = false;
+          for (const [key, value] of Object.entries(pendingRemote)) {
+            const local = storeGet(key);
+            if (JSON.stringify(local) !== JSON.stringify(value)) {
+              localStorage.setItem(key, JSON.stringify(value));
+              changed = true;
+            }
+          }
+          if (changed) {
+            loadToday();
+            loadTomorrow();
+            renderStreak();
+            updateDayRing();
+          }
+          pendingRemote = null;
+        }
+      }, true);
+    }
+
+    // ===== INIT =====
+    let authSubmitting = false;
+
+    document.getElementById('authForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Double-submit guard
+      if (authSubmitting) return;
+      authSubmitting = true;
+
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+      const submitBtn = document.getElementById('authSubmit');
+
+      // Basic client-side validation
+      if (!email.includes('@') || !email.includes('.')) {
+        showAuthError('Please enter a valid email address.');
+        authSubmitting = false;
+        return;
+      }
+      if (password.length < 6) {
+        showAuthError('Password must be at least 6 characters.');
+        authSubmitting = false;
+        return;
+      }
+
+      submitBtn.classList.add('auth-loading');
+      submitBtn.disabled = true;
+
+      const done = () => { authSubmitting = false; submitBtn.disabled = false; };
+
+      if (isSignUp) {
+        signUp(email, password).finally(done);
+      } else {
+        signIn(email, password).finally(done);
+      }
+    });
+
+    // Hide error when user starts typing
+    document.getElementById('authEmail').addEventListener('input', () => {
+      document.getElementById('authError').style.display = 'none';
+    });
+    document.getElementById('authPassword').addEventListener('input', () => {
+      document.getElementById('authError').style.display = 'none';
+    });
+
+    document.getElementById('authToggleBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      isSignUp = !isSignUp;
+      updateAuthUI();
+      document.getElementById('authError').style.display = 'none';
+      document.getElementById('authForm').reset();
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+
+    document.getElementById('gmPushBtn').addEventListener('click', () => {
+      if (confirm('Push all remaining goals to tomorrow?')) {
+        const todayKey = `goals:${getActiveDateString()}`;
+        const tomorrowKey = `goals:${getTomorrowDateString()}`;
+        const today = storeGet(todayKey) || [];
+        const tomorrow = storeGet(tomorrowKey) || [];
+
+        const unchecked = today.filter(g => !g.done);
+        const existingTexts = new Set(tomorrow.map(g => g.text));
+
+        unchecked.forEach(goal => {
+          if (!existingTexts.has(goal.text)) {
+            tomorrow.push({ text: goal.text, done: false });
+          }
+        });
+
+        const todayChecked = today.filter(g => g.done);
+        storeSet(todayKey, todayChecked);
+        storeSet(tomorrowKey, tomorrow);
+
+        loadToday();
+        loadTomorrow();
+        window.dispatchEvent(new CustomEvent('goals-changed'));
+      }
+    });
+
+    makeAddHandlers(
+      document.getElementById('goalInput'),
+      document.getElementById('goalAddBtn'),
+      document.getElementById('goalPolishBtn'),
+      () => `goals:${getActiveDateString()}`,
+      document.getElementById('polishStatus'),
+      loadToday
+    );
+
+    makeAddHandlers(
+      document.getElementById('tomorrowInput'),
+      document.getElementById('tomorrowAddBtn'),
+      document.getElementById('tomorrowPolishBtn'),
+      () => `goals:${getTomorrowDateString()}`,
+      document.getElementById('tomorrowStatus'),
+      loadTomorrow
+    );
+
+    // ===== NAV TABS INTERACTION =====
+    function initTabs() {
+      const tabBtns = document.querySelectorAll('.dash-tab-btn');
+      const panels = document.querySelectorAll('.tab-panel');
+      
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetTab = btn.getAttribute('data-tab');
+          
+          tabBtns.forEach(b => b.classList.remove('active'));
+          panels.forEach(p => p.classList.remove('active'));
+          
+          btn.classList.add('active');
+          document.getElementById(`${targetTab}Panel`).classList.add('active');
+        });
+      });
+    }
+
+    // ===== MEDITATION & BREATHING =====
+    let meditationInterval = null;
+    let meditationTimeLeft = 300; // 5 mins in seconds
+    let isMeditationRunning = false;
+    let breathingInterval = null;
+    let breathingCycleSeconds = 0; // tracks 0 to 9 for the 10s cycle
+
+    function initMeditation() {
+      const presets = document.querySelectorAll('.preset-btn');
+      const timerDisplay = document.getElementById('meditationTimer');
+      const playBtn = document.getElementById('meditationPlayBtn');
+      const resetBtn = document.getElementById('meditationResetBtn');
+      
+      presets.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (isMeditationRunning) return;
+          presets.forEach(p => p.classList.remove('active'));
+          btn.classList.add('active');
+          const mins = parseInt(btn.getAttribute('data-mins'));
+          meditationTimeLeft = mins * 60;
+          updateMeditationTimerDisplay();
+        });
+      });
+
+      playBtn.addEventListener('click', () => {
+        if (isMeditationRunning) {
+          pauseMeditation();
+        } else {
+          startMeditation();
+        }
+      });
+
+      resetBtn.addEventListener('click', () => {
+        resetMeditation();
+      });
+
+      // Guided Lessons list items
+      const lessonItems = document.querySelectorAll('.lesson-item');
+      const audio = document.getElementById('meditationAudio');
+      const playerContainer = document.getElementById('audioPlayerContainer');
+      const playerTitle = document.getElementById('playerTrackTitle');
+      const playerTime = document.getElementById('playerTrackTime');
+      const progressFill = document.getElementById('playerProgressFill');
+      const progressBar = document.getElementById('playerProgressBar');
+
+      lessonItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const src = item.getAttribute('data-src');
+          const title = item.getAttribute('data-title');
+          
+          lessonItems.forEach(li => li.classList.remove('playing'));
+          item.classList.add('playing');
+          
+          audio.src = src;
+          playerTitle.textContent = title;
+          playerContainer.style.display = 'block';
+          
+          audio.play();
+          
+          // If focus timer is not running, we could start breathing helper too
+          if (!isMeditationRunning) {
+            startBreathingAnimation();
+          }
+        });
+      });
+
+      audio.addEventListener('timeupdate', () => {
+        if (!audio.duration) return;
+        const current = formatAudioTime(audio.currentTime);
+        const total = formatAudioTime(audio.duration);
+        playerTime.textContent = `${current} / ${total}`;
+        
+        const percent = (audio.currentTime / audio.duration) * 100;
+        progressFill.style.width = `${percent}%`;
+      });
+
+      progressBar.addEventListener('click', (e) => {
+        if (!audio.duration) return;
+        const rect = progressBar.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const percent = clickX / rect.width;
+        audio.currentTime = percent * audio.duration;
+      });
+    }
+
+    function formatAudioTime(secs) {
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function updateMeditationTimerDisplay() {
+      const m = Math.floor(meditationTimeLeft / 60).toString().padStart(2, '0');
+      const s = (meditationTimeLeft % 60).toString().padStart(2, '0');
+      document.getElementById('meditationTimer').textContent = `${m}:${s}`;
+    }
+
+    function startMeditation() {
+      isMeditationRunning = true;
+      document.getElementById('meditationPlayBtn').innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+      
+      meditationInterval = setInterval(() => {
+        if (meditationTimeLeft > 0) {
+          meditationTimeLeft--;
+          updateMeditationTimerDisplay();
+        } else {
+          // Timer finished
+          pauseMeditation();
+          saveMeditationSession();
+        }
+      }, 1000);
+
+      startBreathingAnimation();
+    }
+
+    function pauseMeditation() {
+      isMeditationRunning = false;
+      document.getElementById('meditationPlayBtn').innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      clearInterval(meditationInterval);
+      stopBreathingAnimation();
+    }
+
+    function resetMeditation() {
+      pauseMeditation();
+      const activePreset = document.querySelector('.preset-btn.active');
+      const mins = activePreset ? parseInt(activePreset.getAttribute('data-mins')) : 5;
+      meditationTimeLeft = mins * 60;
+      updateMeditationTimerDisplay();
+    }
+
+    function startBreathingAnimation() {
+      if (breathingInterval) clearInterval(breathingInterval);
+      
+      const circle = document.getElementById('breathingCircle');
+      const text = document.getElementById('breathingText');
+      
+      // Reset breathing cycle
+      breathingCycleSeconds = 0;
+      updateBreathingUI(circle, text);
+      
+      breathingInterval = setInterval(() => {
+        breathingCycleSeconds = (breathingCycleSeconds + 1) % 10;
+        updateBreathingUI(circle, text);
+      }, 1000);
+    }
+
+    function stopBreathingAnimation() {
+      clearInterval(breathingInterval);
+      breathingInterval = null;
+      const circle = document.getElementById('breathingCircle');
+      const text = document.getElementById('breathingText');
+      circle.style.transform = 'scale(1.0)';
+      text.textContent = 'Focus';
+    }
+
+    function updateBreathingUI(circle, text) {
+      // 10s box breathing: Inhale 4s (0-3), Hold 1s (4), Exhale 4s (5-8), Hold 1s (9)
+      if (breathingCycleSeconds >= 0 && breathingCycleSeconds < 4) {
+        // Inhale phase: scale from 0.85 to 1.15
+        const step = breathingCycleSeconds; // 0, 1, 2, 3
+        const scale = 0.85 + (step / 3) * 0.3;
+        circle.style.transform = `scale(${scale})`;
+        text.textContent = 'Breathe In';
+      } else if (breathingCycleSeconds === 4) {
+        // Hold phase
+        circle.style.transform = 'scale(1.15)';
+        text.textContent = 'Hold';
+      } else if (breathingCycleSeconds >= 5 && breathingCycleSeconds < 9) {
+        // Exhale phase: scale from 1.15 down to 0.85
+        const step = breathingCycleSeconds - 5; // 0, 1, 2, 3
+        const scale = 1.15 - (step / 3) * 0.3;
+        circle.style.transform = `scale(${scale})`;
+        text.textContent = 'Breathe Out';
+      } else if (breathingCycleSeconds === 9) {
+        // Hold phase
+        circle.style.transform = 'scale(0.85)';
+        text.textContent = 'Hold';
+      }
+    }
+
+    function saveMeditationSession() {
+      const history = storeGet('meditation_v1') || [];
+      const session = {
+        date: new Date().toISOString(),
+        durationMins: document.querySelector('.preset-btn.active') ? parseInt(document.querySelector('.preset-btn.active').getAttribute('data-mins')) : 5
+      };
+      history.push(session);
+      storeSet('meditation_v1', history);
+      triggerCloudSync();
+    }
+
+    function loadMeditation() {
+      // Stub for any meditation stats update
+    }
+
+    // ===== FINANCE TRACKER =====
+    function initFinance() {
+      const toggleExpense = document.getElementById('toggleExpense');
+      const toggleIncome = document.getElementById('toggleIncome');
+      const categoryGroup = document.getElementById('financeCategoryGroup');
+      const financeForm = document.getElementById('financeForm');
+      const budgetLimitInput = document.getElementById('budgetLimitInput');
+      const budgetLimitSaveBtn = document.getElementById('budgetLimitSaveBtn');
+      const filterType = document.getElementById('filterType');
+      const filterCategory = document.getElementById('filterCategory');
+
+      let transactionType = 'expense'; // 'expense' or 'income'
+
+      toggleExpense.addEventListener('click', (e) => {
+        e.preventDefault();
+        transactionType = 'expense';
+        toggleExpense.classList.add('active');
+        toggleIncome.classList.remove('active');
+        categoryGroup.style.display = 'block';
+      });
+
+      toggleIncome.addEventListener('click', (e) => {
+        e.preventDefault();
+        transactionType = 'income';
+        toggleIncome.classList.add('active');
+        toggleExpense.classList.remove('active');
+        categoryGroup.style.display = 'none';
+      });
+
+      financeForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const desc = document.getElementById('financeDesc').value.trim();
+        const amount = parseFloat(document.getElementById('financeAmount').value);
+        const category = transactionType === 'income' ? 'income' : document.getElementById('financeCategory').value;
+
+        if (!desc || isNaN(amount) || amount <= 0) return;
+
+        const state = storeGet('finance_v1') || { transactions: [], budgetLimit: 500 };
+        const entry = {
+          id: 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          date: new Date().toISOString(),
+          type: transactionType,
+          description: desc,
+          amount: amount,
+          category: category
+        };
+
+        state.transactions.push(entry);
+        storeSet('finance_v1', state);
+        
+        financeForm.reset();
+        loadFinance();
+        triggerCloudSync();
+      });
+
+      budgetLimitSaveBtn.addEventListener('click', () => {
+        const limit = parseFloat(budgetLimitInput.value);
+        if (isNaN(limit) || limit <= 0) return;
+
+        const state = storeGet('finance_v1') || { transactions: [], budgetLimit: 500 };
+        state.budgetLimit = limit;
+        storeSet('finance_v1', state);
+        
+        budgetLimitInput.value = '';
+        loadFinance();
+        triggerCloudSync();
+      });
+
+      filterType.addEventListener('change', loadFinance);
+      filterCategory.addEventListener('change', loadFinance);
+    }
+
+    function loadFinance() {
+      const state = storeGet('finance_v1') || { transactions: [], budgetLimit: 500 };
+      const txs = state.transactions || [];
+      const budgetLimit = state.budgetLimit || 500;
+
+      // Update budget text display
+      document.getElementById('budgetValue').textContent = `$${budgetLimit.toFixed(2)}`;
+
+      // Filter transactions
+      const fType = document.getElementById('filterType').value;
+      const fCategory = document.getElementById('filterCategory').value;
+
+      let filtered = txs;
+      if (fType !== 'all') {
+        filtered = filtered.filter(t => t.type === fType);
+      }
+      if (fCategory !== 'all') {
+        filtered = filtered.filter(t => t.category === fCategory);
+      }
+
+      // Sort by date descending
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      // Calculate totals for current month
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+      
+      let totalIncome = 0;
+      let totalExpenses = 0;
+
+      txs.forEach(t => {
+        const tDate = new Date(t.date);
+        if (tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear) {
+          if (t.type === 'income') {
+            totalIncome += t.amount;
+          } else {
+            totalExpenses += t.amount;
+          }
+        }
+      });
+
+      const netBalance = totalIncome - totalExpenses;
+
+      document.getElementById('financeTotalIncome').textContent = `$${totalIncome.toFixed(2)}`;
+      document.getElementById('financeTotalExpenses').textContent = `$${totalExpenses.toFixed(2)}`;
+      
+      const netEl = document.getElementById('financeNetBalance');
+      netEl.textContent = `${netBalance >= 0 ? '' : '-'}$${Math.abs(netBalance).toFixed(2)}`;
+      netEl.className = 'finance-card-value ' + (netBalance >= 0 ? 'income' : 'expense');
+
+      // Update Budget Progress Bar and warning colors
+      const usagePercent = Math.min((totalExpenses / budgetLimit) * 100, 100);
+      const fillBar = document.getElementById('budgetProgressBarFill');
+      fillBar.style.width = `${usagePercent}%`;
+      document.getElementById('budgetPercent').textContent = `${Math.round((totalExpenses / budgetLimit) * 100)}% used`;
+
+      // Premium budget warning system
+      const percent = (totalExpenses / budgetLimit) * 100;
+      if (percent >= 100) {
+        fillBar.style.background = 'var(--danger)'; // Over budget
+      } else if (percent >= 80) {
+        fillBar.style.background = 'var(--warning)'; // Nearing limit
+      } else {
+        fillBar.style.background = 'var(--success)'; // Well within budget
+      }
+
+      // Render transactions list
+      const listEl = document.getElementById('transactionsList');
+      const emptyEl = document.getElementById('financeEmptyState');
+      
+      listEl.innerHTML = '';
+      if (filtered.length === 0) {
+        emptyEl.style.display = 'block';
+      } else {
+        emptyEl.style.display = 'none';
+        filtered.forEach(tx => {
+          const item = document.createElement('div');
+          item.className = 'transaction-item';
+
+          const details = document.createElement('div');
+          details.className = 'transaction-details';
+
+          const desc = document.createElement('span');
+          desc.className = 'transaction-desc';
+          desc.textContent = tx.description;
+
+          // Emojis for categories
+          const categoryEmojis = {
+            food: '🥑',
+            rent: '🏠',
+            transport: '🚗',
+            entertainment: '🎬',
+            utilities: '💡',
+            other: '📦',
+            income: '💵'
+          };
+          const emoji = categoryEmojis[tx.category] || '💰';
+
+          const badge = document.createElement('span');
+          badge.className = `category-badge badge-${tx.category || 'other'}`;
+          badge.textContent = `${emoji} ${(tx.category || tx.type).toUpperCase()}`;
+
+          details.appendChild(desc);
+          details.appendChild(badge);
+
+          const right = document.createElement('div');
+          right.style.display = 'flex';
+          right.style.alignItems = 'center';
+          right.style.gap = '12px';
+
+          const amt = document.createElement('span');
+          amt.className = `transaction-amount ${tx.type}`;
+          amt.textContent = `${tx.type === 'income' ? '+' : '-'}$${tx.amount.toFixed(2)}`;
+
+          const delBtn = document.createElement('button');
+          delBtn.className = 'transaction-delete-btn';
+          delBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          `;
+          delBtn.addEventListener('click', () => {
+            if (confirm(`Remove transaction "${tx.description}"?`)) {
+              deleteTransaction(tx.id);
+            }
+          });
+
+          right.appendChild(amt);
+          right.appendChild(delBtn);
+
+          item.appendChild(details);
+          item.appendChild(right);
+          listEl.appendChild(item);
+        });
+      }
+    }
+
+    function deleteTransaction(id) {
+      const state = storeGet('finance_v1') || { transactions: [], budgetLimit: 500 };
+      state.transactions = (state.transactions || []).filter(t => t.id !== id);
+      storeSet('finance_v1', state);
+      loadFinance();
+      triggerCloudSync();
+    }
+
+    // ===== APP BOOT INITIALIZATION =====
+    initTabs();
+    initMeditation();
+    initFinance();
+
+    // Check if user is already logged in
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      currentUser = { email: localStorage.getItem('user_email') };
+      showDashboard();
+    } else {
+      showAuthPage();
+    }
+  </script>
+</body>
+</html>
