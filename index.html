@@ -2654,25 +2654,13 @@
 
     async function signIn(email, password) {
       try {
-        const response = await fetch('/api/auth/signin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-        });
-
-        const data = await safeParseJSON(response);
-
-        if (!response.ok) {
-          showAuthError(humanizeAuthError(data.error) || 'Sign in failed');
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          showAuthError(humanizeAuthError(error.message) || 'Sign in failed');
           return;
         }
-
-        currentUser = data.user;
-        localStorage.setItem('auth_token', data.token);
-        localStorage.setItem('user_email', email);
-
+        currentUser = { email: data.user.email, id: data.user.id };
         showDashboard();
-        // pullFromCloud is already called by showDashboard → startCloudSync
       } catch (error) {
         showAuthError('Network error: ' + error.message);
       }
@@ -2680,37 +2668,25 @@
 
     async function signUp(email, password) {
       try {
-        const response = await fetch('/api/auth/signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-        });
-
-        const data = await safeParseJSON(response);
-
-        if (!response.ok) {
-          showAuthError(humanizeAuthError(data.error) || 'Sign up failed');
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) {
+          showAuthError(humanizeAuthError(error.message) || 'Sign up failed');
           return;
         }
-
-        // Email confirmation required — don't log in yet
-        if (!data.token) {
-          showAuthError(data.message || 'Please check your email to confirm your account.');
-          document.getElementById('authSubmit').classList.remove('auth-loading');
-          return;
+        // If email confirmation is required, the session won't exist yet
+        if (data.session) {
+          currentUser = { email: data.user.email, id: data.user.id };
+          showDashboard();
+        } else {
+          showAuthError('Account created! Please check your email to confirm, then sign in.');
         }
-
-        currentUser = data.user;
-        localStorage.setItem('auth_token', data.token);
-        localStorage.setItem('user_email', email);
-
-        showDashboard();
       } catch (error) {
         showAuthError('Network error: ' + error.message);
       }
     }
 
-    function logout() {
+    async function logout() {
+      await supabase.auth.signOut();
       currentUser = null;
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user_email');
@@ -3855,14 +3831,28 @@
     initMeditation();
     initFinance();
 
-    // Check if user is already logged in
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      currentUser = { email: localStorage.getItem('user_email') };
-      showDashboard();
-    } else {
-      showAuthPage();
-    }
+    // Check if user is already logged in (Supabase persistent session)
+    (async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session && session.user) {
+          currentUser = { email: session.user.email, id: session.user.id };
+          showDashboard();
+        } else {
+          // Fallback: check old localStorage token for backward compat
+          const token = localStorage.getItem('auth_token');
+          if (token) {
+            currentUser = { email: localStorage.getItem('user_email') };
+            showDashboard();
+          } else {
+            showAuthPage();
+          }
+        }
+      } catch (err) {
+        console.warn('Session check failed:', err);
+        showAuthPage();
+      }
+    })();
   </script>
 </body>
 </html>
