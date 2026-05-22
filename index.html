@@ -1760,6 +1760,10 @@
     .notion-block.type-h1 { font-size: 30px; font-weight: 700; font-family: 'Outfit', sans-serif; margin-top: 16px; margin-bottom: 8px; }
     .notion-block.type-h2 { font-size: 24px; font-weight: 600; font-family: 'Outfit', sans-serif; margin-top: 12px; margin-bottom: 6px; }
     .notion-block.type-quote { border-left: 3px solid var(--text-primary); padding-left: 12px; font-style: italic; color: var(--text-secondary); font-family: 'Lora', serif; }
+    .notion-block.type-todo { display: flex; gap: 8px; align-items: flex-start; }
+    .notion-block.type-todo::before { content: '☐'; font-family: monospace; font-size: 18px; line-height: 1.4; color: var(--text-tertiary); margin-right: 4px; user-select: none; cursor: pointer; }
+    .notion-block.type-todo[data-checked="true"]::before { content: '☑'; color: var(--success); }
+    .notion-block.type-todo[data-checked="true"] { color: var(--text-secondary); text-decoration: line-through; }
     
     /* Slash Menu */
     .slash-menu {
@@ -1942,6 +1946,13 @@
             <div>
               <div style="font-weight:600; color: #fff;">Quote</div>
               <div style="font-size:11px;">Capture a quote or idea.</div>
+            </div>
+          </div>
+          <div class="slash-menu-item" data-type="todo">
+            <div class="slash-icon">☐</div>
+            <div>
+              <div style="font-weight:600; color: #fff;">To-do</div>
+              <div style="font-size:11px;">Track tasks with a checkbox.</div>
             </div>
           </div>
         </div>
@@ -2678,8 +2689,12 @@
       const circle = document.getElementById('breathingCircle');
       const text = document.getElementById('breathingText');
       
-      // Reset breathing cycle
+      circle.style.transform = 'scale(0.85)';
+      circle.className = 'breathing-circle hold';
+      
       breathingCycleSeconds = 0;
+      void circle.offsetWidth; // Force reflow
+      
       updateBreathingUI(circle, text);
       
       breathingInterval = setInterval(() => {
@@ -2693,30 +2708,26 @@
       breathingInterval = null;
       const circle = document.getElementById('breathingCircle');
       const text = document.getElementById('breathingText');
+      circle.className = 'breathing-circle';
       circle.style.transform = 'scale(1.0)';
       text.textContent = 'Focus';
     }
 
     function updateBreathingUI(circle, text) {
-      // 10s box breathing: Inhale 4s (0-3), Hold 1s (4), Exhale 4s (5-8), Hold 1s (9)
-      if (breathingCycleSeconds >= 0 && breathingCycleSeconds < 4) {
-        // Inhale phase: scale from 0.85 to 1.15
-        const step = breathingCycleSeconds; // 0, 1, 2, 3
-        const scale = 0.85 + (step / 3) * 0.3;
-        circle.style.transform = `scale(${scale})`;
+      if (breathingCycleSeconds === 0) {
+        circle.style.transform = '';
+        circle.className = 'breathing-circle inhale';
         text.textContent = 'Breathe In';
       } else if (breathingCycleSeconds === 4) {
-        // Hold phase
+        circle.className = 'breathing-circle hold';
         circle.style.transform = 'scale(1.15)';
         text.textContent = 'Hold';
-      } else if (breathingCycleSeconds >= 5 && breathingCycleSeconds < 9) {
-        // Exhale phase: scale from 1.15 down to 0.85
-        const step = breathingCycleSeconds - 5; // 0, 1, 2, 3
-        const scale = 1.15 - (step / 3) * 0.3;
-        circle.style.transform = `scale(${scale})`;
+      } else if (breathingCycleSeconds === 5) {
+        circle.style.transform = '';
+        circle.className = 'breathing-circle exhale';
         text.textContent = 'Breathe Out';
       } else if (breathingCycleSeconds === 9) {
-        // Hold phase
+        circle.className = 'breathing-circle hold';
         circle.style.transform = 'scale(0.85)';
         text.textContent = 'Hold';
       }
@@ -2731,10 +2742,11 @@
       history.push(session);
       storeSet('meditation_v1', history);
       triggerCloudSync();
+      loadMeditation();
     }
 
     function loadMeditation() {
-      // Stub for any meditation stats update
+      if (typeof renderCharts === 'function') renderCharts();
     }
 
     // ===== FINANCE TRACKER =====
@@ -2945,6 +2957,7 @@
           listEl.appendChild(item);
         });
       }
+      if (typeof renderCharts === 'function') renderCharts();
     }
 
     function deleteTransaction(id) {
@@ -3012,14 +3025,18 @@
     function saveJournal() {
       const blocks = [];
       document.querySelectorAll('.notion-block').forEach(b => {
-        blocks.push({ type: b.getAttribute('data-type') || 'p', content: b.innerHTML });
+        blocks.push({ 
+          type: b.getAttribute('data-type') || 'p', 
+          content: b.innerHTML,
+          checked: b.getAttribute('data-checked') === 'true'
+        });
       });
       localStorage.setItem('journal_v1', JSON.stringify({
         title: document.getElementById('journalTitle').value, blocks
       }));
     }
     
-    function createBlock(type = 'p', content = '') {
+    function createBlock(type = 'p', content = '', checked = false) {
       const wrapper = document.createElement('div');
       wrapper.className = 'notion-block-container';
       wrapper.draggable = true;
@@ -3032,12 +3049,20 @@
       block.className = 'notion-block type-' + type;
       block.setAttribute('contenteditable', 'true');
       block.setAttribute('data-type', type);
+      if (type === 'todo') {
+        block.setAttribute('data-checked', checked ? 'true' : 'false');
+      }
       block.setAttribute('data-empty', content.trim() === '' ? 'true' : 'false');
-      block.setAttribute('placeholder', type === 'p' ? "Type '/' for commands" : 'Heading');
+      block.setAttribute('placeholder', type === 'p' ? "Type '/' for commands" : (type === 'todo' ? 'To-do' : 'Heading'));
       block.innerHTML = content;
       
-      wrapper.appendChild(handle);
-      wrapper.appendChild(block);
+      block.addEventListener('click', (e) => {
+        if (block.getAttribute('data-type') === 'todo' && e.offsetX < 24) {
+          const isChecked = block.getAttribute('data-checked') === 'true';
+          block.setAttribute('data-checked', !isChecked);
+          saveJournal();
+        }
+      });
       
       block.addEventListener('input', () => {
         block.setAttribute('data-empty', block.textContent.trim() === '' ? 'true' : 'false');
@@ -3116,8 +3141,9 @@
           const type = item.getAttribute('data-type');
           activeBlock.className = 'notion-block type-' + type;
           activeBlock.setAttribute('data-type', type);
+          if (type === 'todo') activeBlock.setAttribute('data-checked', 'false');
           activeBlock.innerHTML = '';
-          activeBlock.setAttribute('placeholder', type === 'quote' ? 'Empty quote' : 'Heading');
+          activeBlock.setAttribute('placeholder', type === 'quote' ? 'Empty quote' : (type === 'todo' ? 'To-do' : 'Heading'));
           slashMenu.style.display = 'none';
           activeBlock.focus();
           saveJournal();
@@ -3136,7 +3162,7 @@
       const jData = JSON.parse(savedJ);
       document.getElementById('journalTitle').value = jData.title || '';
       if (jData.blocks && jData.blocks.length > 0) {
-        jData.blocks.forEach(b => blocksContainer.appendChild(createBlock(b.type, b.content)));
+        jData.blocks.forEach(b => blocksContainer.appendChild(createBlock(b.type, b.content, b.checked)));
       } else {
         blocksContainer.appendChild(createBlock('p', ''));
       }
@@ -3146,30 +3172,75 @@
     document.getElementById('journalTitle').addEventListener('input', saveJournal);
 
     // ===== CHART.JS DASHBOARD ANALYTICS =====
+    let g_mainChart, g_finChart, g_medChart;
+
     function renderCharts() {
       if (!window.Chart) return;
+      
+      const finState = storeGet('finance_v1') || { transactions: [] };
+      const txs = finState.transactions || [];
+      const medState = storeGet('meditation_v1') || [];
+      
+      const labels = [];
+      const incomeData = [];
+      const expenseData = [];
+      const medData = [];
+      const activityData = [];
+      
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toISOString().split('T')[0];
+        labels.push(d.toLocaleDateString('en-US', { weekday: 'short' }));
+        
+        let inc = 0, exp = 0;
+        txs.forEach(tx => {
+          if (tx.date.startsWith(dateStr)) {
+            if (tx.type === 'income') inc += tx.amount;
+            else exp += tx.amount;
+          }
+        });
+        incomeData.push(inc);
+        expenseData.push(exp);
+        
+        let medMins = 0;
+        medState.forEach(m => {
+          if (m.date && m.date.startsWith(dateStr)) {
+            medMins += m.durationMins;
+          }
+        });
+        medData.push(medMins);
+        
+        let score = 50 + (medMins * 2) + (inc > exp ? 10 : (exp > inc ? -10 : 0));
+        score = Math.max(0, Math.min(100, score));
+        activityData.push(score);
+      }
+
       const ctxMain = document.getElementById('mainActivityChart')?.getContext('2d');
       const ctxBar = document.getElementById('financeBarChart')?.getContext('2d');
       const ctxLine = document.getElementById('meditationLineChart')?.getContext('2d');
       if(!ctxMain || !ctxBar || !ctxLine) return;
       
+      if (g_mainChart) g_mainChart.destroy();
+      if (g_finChart) g_finChart.destroy();
+      if (g_medChart) g_medChart.destroy();
+
       Chart.defaults.color = '#A1A1AA';
       Chart.defaults.font.family = 'Inter';
-      const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       
-      new Chart(ctxMain, {
+      g_mainChart = new Chart(ctxMain, {
         type: 'line',
-        data: { labels, datasets: [{ label: 'Activity Score', data: [65, 59, 80, 81, 56, 55, 90], borderColor: '#FAFAFA', backgroundColor: 'rgba(250, 250, 250, 0.1)', fill: true, tension: 0.4 }] },
+        data: { labels, datasets: [{ label: 'Activity Score', data: activityData, borderColor: '#FAFAFA', backgroundColor: 'rgba(250, 250, 250, 0.1)', fill: true, tension: 0.4 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
       });
-      new Chart(ctxBar, {
+      g_finChart = new Chart(ctxBar, {
         type: 'bar',
-        data: { labels, datasets: [{ label: 'Income', data: [120, 0, 0, 450, 0, 0, 100], backgroundColor: '#10B981' }, { label: 'Expense', data: [45, 20, 60, 12, 100, 30, 80], backgroundColor: '#EF4444' }] },
+        data: { labels, datasets: [{ label: 'Income', data: incomeData, backgroundColor: '#10B981' }, { label: 'Expense', data: expenseData, backgroundColor: '#EF4444' }] },
         options: { responsive: true, maintainAspectRatio: false }
       });
-      new Chart(ctxLine, {
+      g_medChart = new Chart(ctxLine, {
         type: 'line',
-        data: { labels, datasets: [{ label: 'Minutes', data: [10, 15, 0, 20, 10, 30, 15], borderColor: '#8B5CF6', tension: 0.3 }] },
+        data: { labels, datasets: [{ label: 'Minutes', data: medData, borderColor: '#8B5CF6', tension: 0.3 }] },
         options: { responsive: true, maintainAspectRatio: false }
       });
     }
