@@ -2021,49 +2021,50 @@
         <!-- Editor -->
         <div class="notion-editor">
           <input type="text" class="notion-title-input" id="journalTitle" placeholder="Untitled Journal" />
-        <div id="notionBlocksContainer">
-          <!-- Blocks injected here -->
-        </div>
+          <div id="notionBlocksContainer">
+            <!-- Blocks injected here -->
+          </div>
         
-        <!-- Slash Menu UI -->
-        <div class="slash-menu" id="slashMenu">
-          <div class="slash-menu-item selected" data-type="p">
-            <div class="slash-icon">T</div>
-            <div>
-              <div style="font-weight:600; color: #fff;">Text</div>
-              <div style="font-size:11px;">Just start typing with plain text.</div>
+          <!-- Slash Menu UI -->
+          <div class="slash-menu" id="slashMenu">
+            <div class="slash-menu-item selected" data-type="p">
+              <div class="slash-icon">T</div>
+              <div>
+                <div style="font-weight:600; color: #fff;">Text</div>
+                <div style="font-size:11px;">Just start typing with plain text.</div>
+              </div>
+            </div>
+            <div class="slash-menu-item" data-type="h1">
+              <div class="slash-icon">H1</div>
+              <div>
+                <div style="font-weight:600; color: #fff;">Heading 1</div>
+                <div style="font-size:11px;">Big section heading.</div>
+              </div>
+            </div>
+            <div class="slash-menu-item" data-type="h2">
+              <div class="slash-icon">H2</div>
+              <div>
+                <div style="font-weight:600; color: #fff;">Heading 2</div>
+                <div style="font-size:11px;">Medium section heading.</div>
+              </div>
+            </div>
+            <div class="slash-menu-item" data-type="quote">
+              <div class="slash-icon">"</div>
+              <div>
+                <div style="font-weight:600; color: #fff;">Quote</div>
+                <div style="font-size:11px;">Capture a quote or idea.</div>
+              </div>
+            </div>
+            <div class="slash-menu-item" data-type="todo">
+              <div class="slash-icon">☐</div>
+              <div>
+                <div style="font-weight:600; color: #fff;">To-do</div>
+                <div style="font-size:11px;">Track tasks with a checkbox.</div>
+              </div>
             </div>
           </div>
-          <div class="slash-menu-item" data-type="h1">
-            <div class="slash-icon">H1</div>
-            <div>
-              <div style="font-weight:600; color: #fff;">Heading 1</div>
-              <div style="font-size:11px;">Big section heading.</div>
-            </div>
-          </div>
-          <div class="slash-menu-item" data-type="h2">
-            <div class="slash-icon">H2</div>
-            <div>
-              <div style="font-weight:600; color: #fff;">Heading 2</div>
-              <div style="font-size:11px;">Medium section heading.</div>
-            </div>
-          </div>
-          <div class="slash-menu-item" data-type="quote">
-            <div class="slash-icon">"</div>
-            <div>
-              <div style="font-weight:600; color: #fff;">Quote</div>
-              <div style="font-size:11px;">Capture a quote or idea.</div>
-            </div>
-          </div>
-          <div class="slash-menu-item" data-type="todo">
-            <div class="slash-icon">☐</div>
-            <div>
-              <div style="font-weight:600; color: #fff;">To-do</div>
-              <div style="font-size:11px;">Track tasks with a checkbox.</div>
-            </div>
-          </div>
-        </div>
-      </div>
+        </div> <!-- Close .notion-editor -->
+      </div> <!-- Close .journal-layout -->
     </div> <!-- Close #journalPanel -->
 
     <!-- MEDITATION PANEL -->
@@ -2796,10 +2797,8 @@
       const circle = document.getElementById('breathingCircle');
       const text = document.getElementById('breathingText');
       
-      circle.style.transform = 'scale(0.85)';
-      circle.className = 'breathing-circle hold';
-      
       breathingCycleSeconds = 0;
+      circle.className = 'breathing-circle';
       void circle.offsetWidth; // Force reflow
       
       updateBreathingUI(circle, text);
@@ -2816,26 +2815,22 @@
       const circle = document.getElementById('breathingCircle');
       const text = document.getElementById('breathingText');
       circle.className = 'breathing-circle';
-      circle.style.transform = 'scale(1.0)';
       text.textContent = 'Focus';
     }
 
     function updateBreathingUI(circle, text) {
+      // 10s box breathing: Inhale 4s (0-3), Hold 1s (4), Exhale 4s (5-8), Hold 1s (9)
       if (breathingCycleSeconds === 0) {
-        circle.style.transform = '';
         circle.className = 'breathing-circle inhale';
         text.textContent = 'Breathe In';
       } else if (breathingCycleSeconds === 4) {
         circle.className = 'breathing-circle hold';
-        circle.style.transform = 'scale(1.15)';
         text.textContent = 'Hold';
       } else if (breathingCycleSeconds === 5) {
-        circle.style.transform = '';
         circle.className = 'breathing-circle exhale';
         text.textContent = 'Breathe Out';
       } else if (breathingCycleSeconds === 9) {
-        circle.className = 'breathing-circle hold';
-        circle.style.transform = 'scale(0.85)';
+        circle.className = 'breathing-circle';
         text.textContent = 'Hold';
       }
     }
