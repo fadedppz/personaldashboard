@@ -3307,6 +3307,9 @@
         }
       });
       
+      wrapper.appendChild(handle);
+      wrapper.appendChild(block);
+      
       wrapper.addEventListener('dragstart', (e) => { wrapper.classList.add('dragging'); e.dataTransfer.setData('text/plain', ''); });
       wrapper.addEventListener('dragend', () => { wrapper.classList.remove('dragging'); saveJournal(); });
       wrapper.addEventListener('dragover', (e) => {
